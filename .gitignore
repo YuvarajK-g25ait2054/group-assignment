@@ -216,3 +216,20 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# MLOps Assignment - large files (do NOT commit these)
+sample_data.json
+*.json.gz
+*.csv
+*.tsv
+
+# HuggingFace cache
+.cache/
+
+# Model weights (large files)
+fine_tuned_model/
+results/
+*.safetensors
+*.bin
+*.pt
+*.pth
