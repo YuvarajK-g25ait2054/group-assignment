@@ -1,0 +1,43 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          pip install transformers==4.46.0 datasets>=2.12.0
+          pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+      
+      - name: Verify files exist
+        run: |
+          ls -la
+          test -f data.py
+          test -f utils.py
+          test -f inference.py
+          test -f Dockerfile
+          test -f id2label.json
+          echo "✅ All required files present"
+      
+      - name: Test data loading
+        run: |
+          python -c "import json; data = json.load(open('id2label.json')); print(f'Labels: {data}')"
+          echo "✅ Data files valid"
+      
+      - name: Test inference script
+        run: |
+          python inference.py

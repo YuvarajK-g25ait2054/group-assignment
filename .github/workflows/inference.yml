@@ -1,0 +1,43 @@
+name: Model Inference
+
+on:
+  workflow_dispatch:
+    inputs:
+      model_name:
+        description: 'HuggingFace model name'
+        required: false
+        default: 'YuvarajK-g25ait2054/distilbert-imdb-sentiment'
+
+jobs:
+  inference:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          pip install transformers==4.46.0 datasets>=2.12.0
+          pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+      
+      - name: Run inference
+        env:
+          MODEL_NAME: ${{ github.event.inputs.model_name }}
+        run: |
+          echo "Running inference with model: $MODEL_NAME"
+          python inference.py
+      
+      - name: Upload results
+        uses: actions/upload-artifact@v3
+        with:
+          name: inference-results
+          path: |
+            *.log
+            *.txt
+          if-no-files-found: ignore
